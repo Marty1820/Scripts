@@ -1,0 +1,16 @@
+#!/bin/bash
+
+# Sends a notifcation with current watt usage, battery cycles, charging/discharging, & percent
+
+BATPATH='/sys/class/power_supply/BAT1'
+# Wattage calculation
+CURRENT=$(< $BATPATH/current_now)
+VOLT=$(< $BATPATH/voltage_now)
+WATTS=$(($CURRENT * $VOLT / 1000000000000))
+# Other info
+CYCLE=$(< $BATPATH/cycle_count)
+STATUS=$(< $BATPATH/status)
+PER=$(< $BATPATH/capacity)
+
+
+notify-send 'Battery Info' "Using $WATTS Watts \nUsed $CYCLE Cycles \nCurrently $STATUS \n$PER% Remaining" --icon=dialog-information

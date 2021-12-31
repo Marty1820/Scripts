@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+
+# Need wireguard-tools & NetworkManager installed.
+# Put wg0.conf in /etc/wireguard/wg0.conf
+
+if [[ $(nmcli connection show -a | grep wg0) ]]; then
+    echo "Wireguard is currently running"
+    read -p "Would you like disconnect Wireguard 'wg0' (y|n)?: " varClose
+        case ${varClose:0:1} in
+        y|Y )
+        echo "Bringing Wireguard tunnel 'wg0' down"
+        wg-quick down wg0
+        ;;
+        n|N )
+        echo "Leaving Wireguard 'wg0' connected"
+        ;;
+        * )
+        echo "Invalid entry"
+        echo "Leaving Wireguard 'wg0' connected"
+        echo "Rerun command if you'd like to change options"
+        ;;
+        esac
+else
+    echo "Wireguard tunnel 'wg0' is not connected"
+    read -p "Would you like to connect 'wg0' tunnel (y|n)?: " varConnect
+        case ${varConnect:0:1} in
+        y|Y )
+        echo "Connecting to wireguard tunnel 'wg0'"
+        wg-quick up wg0
+        ;;
+        n|N )
+        echo "Leaving wireguard tunnel 'wg0' down"
+        ;;
+        * )
+        echo "Invalid entry"
+        echo "Leaving wireguard tunnel 'wg0' down"
+        echo "Rerun command if you'd like to change options"
+        ;;
+        esac
+fi

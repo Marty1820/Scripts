@@ -1,0 +1,39 @@
+#!/usr/bin/env bash
+
+# Default pacman updates
+#sudo pacman -Syu
+# Arch and AUR packages
+paru -Syu
+
+# Display all devices detected
+#fwupdmgr get-devices
+# Download the latest metadate from LVFS
+fwupdmgr refresh
+# List updates available
+#fwupdmgr get-updates
+# Install Updates
+fwupdmgr update
+
+# Checks if linux-zen kernal was updated
+# and reboot is required then notifies user
+s1=$(pacman -Q linux-zen | sed -e 's/linux-zen //' -e 's/-/./g')
+s2=$(uname -r | sed -e 's/....$//' -e 's/-/./g')
+
+if [ "$s1" == "$s2" ]; then
+  echo "No reboot is required"
+  exit 1
+else
+    echo "Reboot required to complete updates"
+    read -p "Would you like to reboot now (y|n)?: " varReboot
+        case ${varReboot:0:1} in
+        y|Y )
+        echo "Restarting Computer"
+        reboot
+        ;;
+        n|N )
+        echo "Please restart your computer when convenient"
+        ;;
+        esac
+fi
+
+exit 0
