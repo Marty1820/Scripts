@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+# See's if wireguard is connected and askes if you want to change it
+
 # Need wireguard-tools & NetworkManager installed.
 # Put wg0.conf in /etc/wireguard/wg0.conf
 

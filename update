@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+# Updates packages on Arch and notifies if reboot is needed
+# after kernel update with -zen kernel
+
 # Default pacman updates
 #sudo pacman -Syu
 # Arch and AUR packages
