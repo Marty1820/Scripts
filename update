@@ -3,11 +3,23 @@
 # Updates packages on Arch and notifies if reboot is needed
 # after kernel update with -zen kernel
 
+echo "Upgrading Packages"
 # Default pacman updates
 #sudo pacman -Syu
 # Arch and AUR packages
 paru -Syu
 
+echo "Updating tldr-pages"
+#Updates TLDR
+tldr -u
+
+#echo "Upgrading pip packages"
+# pip3 packages
+#pip3 list --outdated | awk '{print $1}' > req.txt
+#Removed top 2 lines
+#pip3 install -r req.txt --upgrade
+
+echo "Upgrading firmware"
 # Display all devices detected
 #fwupdmgr get-devices
 # Download the latest metadate from LVFS
