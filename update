@@ -1,44 +1,68 @@
 #!/usr/bin/env bash
 
-# Updates packages on Arch and notifies if reboot is needed
+# Updates packages on Arch, tldr, and firmware
+# then checks for cpu vulnerabilities
+# notifies if reboot is needed
 # after kernel update with -zen kernel
 
+# Pacman packages and AUR packages
 echo "Upgrading Packages"
-# Default pacman updates
 #sudo pacman -Syu
-# Arch and AUR packages
 paru -Syu
 
+# Updates TLDR
+echo ""
 echo "Updating tldr-pages"
-#Updates TLDR
 tldr -u
 
 #echo "Upgrading pip packages"
 # pip3 packages
 #pip3 list --outdated | awk '{print $1}' > req.txt
-#Removed top 2 lines
+#Remov top 2 lines
 #pip3 install -r req.txt --upgrade
 
+# Updates harware firmware
+echo ""
 echo "Upgrading firmware"
-# Display all devices detected
+#echo "Displaying all devices detected"
 #fwupdmgr get-devices
-# Download the latest metadate from LVFS
+#echo "Downloading the latest metadate from LVFS"
 fwupdmgr refresh
-# List updates available
+#echo "Available Updates"
 #fwupdmgr get-updates
-# Install Updates
+#echo "Installing Updates"
 fwupdmgr update
 
+# Checks for vulnerabilities
+echo ""
+echo "Checking CPU vulnerabliites"
+if [[ $(lscpu | grep 'Vulnerability' | grep 'Vulnerable') ]]; then
+    echo "#####################"
+    echo "##YOU'RE VULNERABLE##"
+    echo "#####################"
+    echo ""
+    echo "run 'lscpu' and look at the Vulnerability section to see what's wrong"
+    read -p "Enter to continue <ctrl + c> to cancel"</dev/tty
+else
+    echo ""
+    echo "No vulnerabilities found"
+    echo ""
+fi
+
+echo "Checking for new Kernel"
 # Checks if linux-zen kernal was updated
 # and reboot is required then notifies user
 s1=$(pacman -Q linux-zen | sed -e 's/linux-zen //' -e 's/-/./g')
 s2=$(uname -r | sed -e 's/....$//' -e 's/-/./g')
 
 if [ "$s1" == "$s2" ]; then
-  echo "No reboot is required"
-  exit 1
+    echo ""
+    echo "Latest Kernel Running"
+    echo "No reboot is required"
 else
-    echo "Reboot required to complete updates"
+    echo ""
+    echo "Newer kernel has been installed"
+    echo "Reboot is required to finish install"
     read -p "Would you like to reboot now (y|n)?: " varReboot
         case ${varReboot:0:1} in
         y|Y )
@@ -50,5 +74,3 @@ else
         ;;
         esac
 fi
-
-exit 0
