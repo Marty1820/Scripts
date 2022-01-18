@@ -1,41 +1,53 @@
 #!/usr/bin/env bash
 
-# See's if wireguard is connected and askes if you want to change it
+### WARNING
+# resolv.conf gets cleared out after bringing VPN down
+# normal connection needs to be reconnected to allow DNS
+
+# See's if vpn is connected and allows changing it
+
+#Change to name of network interface 'ip a' to list interfaces
+vpn=wg0
 
 # Need wireguard-tools & NetworkManager installed.
-# Put wg0.conf in /etc/wireguard/wg0.conf
+# Put .conf file in /etc/wireguard/vpn.conf to use wg-quick
+# run 'nmcli con import type wireguard file /etc/wireguard/vpn.conf' to use nmcli connection
 
-if [[ $(nmcli connection show -a | grep wg0) ]]; then
+if [[ $(nmcli connection show -a | grep $vpn) ]]; then
     echo "Wireguard is currently running"
-    read -p "Would you like disconnect Wireguard 'wg0' (y|n)?: " varClose
+    read -p "Would you like disconnect Wireguard '$vpn' (y|n)?: " varClose
         case ${varClose:0:1} in
         y|Y )
-        echo "Bringing Wireguard tunnel 'wg0' down"
-        wg-quick down wg0
+        echo "Bringing Wireguard tunnel '$vpn' down"
+        nmcli connection down $vpn
+        #wg-quick down $vpn
+        con=$(nmcli connection show -a | awk 'FNR == 2 {print $1}')
+        nmcli connection up $con
         ;;
         n|N )
-        echo "Leaving Wireguard 'wg0' connected"
+        echo "Leaving Wireguard '$vpn' connected"
         ;;
         * )
         echo "Invalid entry"
-        echo "Leaving Wireguard 'wg0' connected"
+        echo "Leaving Wireguard '$vpn' connected"
         echo "Rerun command if you'd like to change options"
         ;;
         esac
 else
-    echo "Wireguard tunnel 'wg0' is not connected"
-    read -p "Would you like to connect 'wg0' tunnel (y|n)?: " varConnect
+    echo "Wireguard tunnel '$vpn' is not connected"
+    read -p "Would you like to connect '$vpn' tunnel (y|n)?: " varConnect
         case ${varConnect:0:1} in
         y|Y )
-        echo "Connecting to wireguard tunnel 'wg0'"
-        wg-quick up wg0
+        echo "Connecting to wireguard tunnel '$vpn'"
+        nmcli connection up $vpn
+        #wg-quick up $vpn
         ;;
         n|N )
-        echo "Leaving wireguard tunnel 'wg0' down"
+        echo "Leaving wireguard tunnel '$vpn' down"
         ;;
         * )
         echo "Invalid entry"
-        echo "Leaving wireguard tunnel 'wg0' down"
+        echo "Leaving wireguard tunnel '$vpn' down"
         echo "Rerun command if you'd like to change options"
         ;;
         esac
