@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+
+# needs .ssh/config setup before functioning
+
+# pulls 'Host' to display
+host=$(awk '/Host / {print $2}' ~/.ssh/config)
+
+# Verifies you typed in a number and not other characters
+# Will still error if you type a number that doesn't exist
+num='^[0-9]+$'
+
+# Runs loop to ssh into system then reprompts when leaving system
+while true; do
+    printf "Please select an option:\n\n"
+    printf "$host" | egrep -n "*"
+    printf "0:Quit/Exit\n\n"
+    read -p "Enter selection [#s only]: " choice
+    case "$choice" in
+        0)
+            printf "\nUser requested exit\n"
+            exit
+            ;;
+        *)
+            if ! [[ $choice =~ $num ]] ; then
+	            printf "\n############# \nInvalid entry \n#############\n"
+	        else
+	            name=$(printf "$host" | head -$choice | tail +$choice)
+	            ssh $name
+            fi
+            ;;
+    esac
+done
+
