@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# needs .ssh/config setup before functioning
+# needs ~/.ssh/config setup before functioning
 
 # pulls 'Host' to display
 host=$(awk '/Host / {print $2}' ~/.ssh/config)
