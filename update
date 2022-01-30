@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/bash
 
 # Updates packages on Arch, tldr, and firmware
 # then checks for cpu vulnerabilities

@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/bash
 
 #Change to name of network interface 'ip a' to list interfaces
 vpn=wg0
