@@ -12,9 +12,9 @@ num='^[0-9]+$'
 # Runs loop to ssh into system then reprompts when leaving system
 while true; do
     printf "Please select an option:\n\n"
-    printf "$host" | egrep -n "*"
+    printf "%s" "$host" | grep -En ".*."
     printf "0:Quit/Exit\n\n"
-    read -p "Enter selection [#s only]: " choice
+    read -rp "Enter selection [#s only]: " choice
     case "$choice" in
         0)
             printf "\nUser requested exit\n"
@@ -24,8 +24,8 @@ while true; do
             if ! [[ $choice =~ $num ]] ; then
 	            printf "\n############# \nInvalid entry \n#############\n"
 	        else
-	            name=$(printf "$host" | head -$choice | tail +$choice)
-	            ssh $name
+	            name=$(printf "%s" "$host" | head -"$choice" | tail +"$choice")
+	            ssh "$name"
             fi
             ;;
     esac

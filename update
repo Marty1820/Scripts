@@ -36,13 +36,13 @@ fwupdmgr update
 # Checks for vulnerabilities
 echo ""
 echo "Checking CPU vulnerabliites"
-if [[ $(lscpu | grep 'Vulnerability' | grep 'Vulnerable') ]]; then
+if lscpu | grep 'Vulnerability' | grep 'Vulnerable'; then
     echo "#####################"
     echo "##YOU'RE VULNERABLE##"
     echo "#####################"
     echo ""
     echo "run 'lscpu' and look at the Vulnerability section to see what's wrong"
-    read -p "Enter to continue <ctrl + c> to cancel"</dev/tty
+    read -rp "Enter to continue <ctrl + c> to cancel"</dev/tty
 else
     echo ""
     echo "No vulnerabilities found"
@@ -63,7 +63,7 @@ else
     echo ""
     echo "Newer kernel has been installed"
     echo "Reboot is required to finish install"
-    read -p "Would you like to reboot now (y|n)?: " varReboot
+    read -rp "Would you like to reboot now (y|n)?: " varReboot
         case ${varReboot:0:1} in
         y|Y )
         echo "Restarting Computer"

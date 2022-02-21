@@ -6,7 +6,7 @@ BATPATH='/sys/class/power_supply/BAT1'
 # Wattage calculation
 CURRENT=$(< $BATPATH/current_now)
 VOLT=$(< $BATPATH/voltage_now)
-WATTS=$(($CURRENT * $VOLT / 1000000000000))
+WATTS=$(("$CURRENT" * "$VOLT" / 1000000000000))
 # Other info
 CYCLE=$(< $BATPATH/cycle_count)
 STATUS=$(< $BATPATH/status)
