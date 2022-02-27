@@ -1,12 +1,13 @@
 #!/bin/bash
 
+# array for all cpu's energy_perf_bias
 eperf_files=(/sys/devices/system/cpu/cpu*/power/energy_perf_bias)
 
+# Array of options and # equivalants
 options=("performance" "balance-performance" "normal, default" "balance-power" "power")
 epb_values=(0 4 6 8 15)
 
-# Can't cat multiple files?
-#all_cores=$(grep -e * -f "${eperf_files[@]}" | awk -F : '{print $2}')
+# Grabs the first file # from the array
 cur_ener=$(cat "${eperf_files[1]}")
 
 # Changes #'s to Options
@@ -19,6 +20,7 @@ case "${cur_ener}" in
   (*)  cur_name=$(printf "Value %s [0-15]" "$cur_ener") ;;
 esac
 
+# verifies that it's a number
 num='^[0-9]+$'
 
 # Runs loop to choose performance level
@@ -29,13 +31,16 @@ while true; do
     read -rp "Enter selection [#s only]: " choice
     case "$choice" in
         0)
+            # Exits prompts
             printf "\nUser requested exit\n"
             exit
             ;;
         *)
             if ! [[ $choice =~ $num ]] ; then
+	            # Notifies of invalid entry and reruns loop
 	            printf "\n############# \nInvalid entry \n#############\n"
 	        else
+	            # Prints out choice then changes files to choice
 	            name=$(printf "%s\n" "${epb_values[choice - 1]}")
 	            echo "$name" | sudo tee "${eperf_files[@]}" > /dev/null
 	            sleep 2
