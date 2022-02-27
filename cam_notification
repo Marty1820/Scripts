@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 # Notifies user when camera is enabled/disabled
 # dependencies "dunst"
 
@@ -18,7 +18,7 @@ while true; do
     dunstify --raw_icon=$icon/camera-disabled-symbolic.symbolic.png --urgency=critical "WEBCAM ENABLED"
 
     # Waits until directory is gone/Cam Disabled
-    until [[ ! -d "$CamDir" ]]
+    until [ ! -d "$CamDir" ]
     do
         sleep 1
     done
