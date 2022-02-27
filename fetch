@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 #
 # ufetch-arch - tiny system info for arch
 
@@ -6,25 +6,18 @@
 user=${USER:-$(id -un)}
 hostname=${HOSTNAME:-${hostname:-$(hostname)}}
 os="$(grep PRETTY_NAME < /etc/os-release | sed -e 's/PRETTY_NAME=//' -e 's/"//g')"
-kernel="$(uname -r | sed -e 's/-zen$//')"
+kernel="$(uname -r)"
 uptime="$(uptime -p | sed 's/up //')"
 packages="$(pacman -Qq | wc -l)"
 shell="$(basename "${SHELL}")"
 
-#ui
-if [ "$DESKTOP_SESSION" != "" ]; then
-    ui="$DESKTOP_SESSION"
-elif [ "$XDG_CURRENT_DESKTOP" != "" ]; then
-    ui="$XDG_CURRENT_DESKTOP"
-else
-    ui="UNKNOWN"
-fi
-ui="$(basename "${ui}")"
+#cpumodel
+cpumodel=$(grep 'model name' < /proc/cpuinfo | uniq | cut -c 14-)
 
 #memory
-memfree="$(free -h | grep Mem | awk '{print $3}')"
-memtotal="$(free -h | grep Mem | awk '{print $2}')"
-mem="$(echo "${memfree}/${memtotal}")"
+memfree=$(free -h | grep Mem | awk '{print $3}')
+memtotal=$(free -h | grep Mem | awk '{print $2}')
+mem=$(printf "%s/%s" "$memfree" "$memtotal")
 
 ## DEFINE COLORS
 # probably don't change these
@@ -52,12 +45,12 @@ c0="${reset}${cyan}"                # first color
 cat <<EOF
 
 ${c0}         .         ${nc}${user}${ic}@${nc}${hostname}${reset}
-${c0}        / \\        ${lc}OS:        ${ic}${os}${reset}
-${c0}       /   \\       ${lc}KERNEL:    ${ic}${kernel}${reset}
-${c0}      /^.   \\      ${lc}UPTIME:    ${ic}${uptime}${reset}
-${c0}     /  .-.  \\     ${lc}PACKAGES:  ${ic}${packages}${reset}
-${c0}    /  (   ) _\\    ${lc}SHELL:     ${ic}${shell}${reset}
-${c0}   / _.~   ~._^\\   ${lc}DE/WM:     ${ic}${ui}${reset}
-${c0}  /.^         ^.\\  ${lc}MEMORY:    ${ic}${mem}${reset}
+${c0}        / \\        ${lc}OS:    ${ic}${os}${reset}
+${c0}       /   \\       ${lc}KERN:  ${ic}${kernel}${reset}
+${c0}      /^.   \\      ${lc}UP:    ${ic}${uptime}${reset}
+${c0}     /  .-.  \\     ${lc}PKGS:  ${ic}${packages}${reset}
+${c0}    /  (   ) _\\    ${lc}SHELL: ${ic}${shell}${reset}
+${c0}   / _.~   ~._^\\   ${lc}CPU:   ${ic}${cpumodel}${reset}
+${c0}  /.^         ^.\\  ${lc}MEM:   ${ic}${mem}${reset}
 
 EOF
