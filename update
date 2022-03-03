@@ -6,47 +6,38 @@
 # after kernel update with -zen kernel
 
 # Pacman packages and AUR packages
-echo "Upgrading Packages"
+printf "Upgrading Packages\n"
 #sudo pacman -Syu
-paru -Syu
+paru -Syu --noconfirm
 
 # Updates TLDR
-echo ""
-echo "Updating tldr-pages"
+printf "\nUpdating tldr-pages\n"
 tldr -u
 
-#echo "Upgrading pip packages"
+#printf "\nUpgrading pip packages\n"
 # pip3 packages
 #pip3 list --outdated | awk '{print $1}' > req.txt
 #Remov top 2 lines
 #pip3 install -r req.txt --upgrade
 
 # Updates harware firmware
-echo ""
-echo "Upgrading firmware"
-#echo "Displaying all devices detected"
+printf "\nUpgrading firmware\n"
+#printf "\nDisplaying all devices detected"
 #fwupdmgr get-devices
-#echo "Downloading the latest metadate from LVFS"
+printf "\nDownloading the latest metadate from LVFS\n"
 fwupdmgr refresh
-#echo "Available Updates"
+#printf "\nAvailable Updates"
 #fwupdmgr get-updates
-#echo "Installing Updates"
+printf "\nInstalling Updates\n"
 fwupdmgr update
 
 # Checks for vulnerabilities
-echo ""
-echo "Checking CPU vulnerabliites"
+printf "\nChecking CPU vulnerabliites\n"
 if lscpu | grep 'Vulnerability' | grep 'Vulnerable'; then
-    echo "#####################"
-    echo "##YOU'RE VULNERABLE##"
-    echo "#####################"
-    echo ""
-    echo "run 'lscpu' and look at the Vulnerability section to see what's wrong"
+    printf "\n#####################\n##YOU'RE VULNERABLE##\n#####################\n\nrun 'lscpu' and look at the Vulnerability section to see what's wrong\n"
     read -rp "Enter to continue <ctrl + c> to cancel"</dev/tty
 else
-    echo ""
-    echo "No vulnerabilities found"
-    echo ""
+    printf "\nNo vulnerabilities found\n"
 fi
 
 echo "Checking for new Kernel"
@@ -56,20 +47,16 @@ s1=$(pacman -Q linux-zen | sed -e 's/linux-zen //' -e 's/-/./g')
 s2=$(uname -r | sed -e 's/....$//' -e 's/-/./g')
 
 if [ "$s1" == "$s2" ]; then
-    echo ""
-    echo "Latest Kernel Running"
-    echo "No reboot is required"
+    printf "\nLatest Kernel Running\nNo reboot is required\n"
 else
-    echo ""
-    echo "Newer kernel has been installed"
-    echo "Reboot is required to finish install"
-    read -rp "Would you like to reboot now (y|n)?: " varReboot
+    printf "\nNewer kernel has been installed\nReboot is required to finish install\n"
+    read -rp "Would you like to reboot now [y/N]?: " varReboot
         case ${varReboot:0:1} in
         y|Y )
         echo "Restarting Computer"
         reboot
         ;;
-        n|N )
+        * )
         echo "Please restart your computer when convenient"
         ;;
         esac

@@ -9,7 +9,7 @@ vpn=wg0
 
 if nmcli connection show -a | grep $vpn; then
     echo "Wireguard is currently running"
-    read -rp "Would you like disconnect Wireguard '$vpn' (y|n)?: " varClose
+    read -rp "Would you like disconnect Wireguard '$vpn' [y/n]?: " varClose
         case ${varClose:0:1} in
         y|Y )
         echo "Bringing Wireguard tunnel '$vpn' down"
@@ -23,14 +23,12 @@ if nmcli connection show -a | grep $vpn; then
         echo "Leaving Wireguard '$vpn' connected"
         ;;
         * )
-        echo "Invalid entry"
-        echo "Leaving Wireguard '$vpn' connected"
-        echo "Rerun command if you'd like to change options"
+        printf "\nInvalid entry\nLeaving Wireguard '%s' connected\nRerun command if you'd like to change options" "$vpn"
         ;;
         esac
 else
     echo "Wireguard tunnel '$vpn' is not connected"
-    read -rp "Would you like to connect '$vpn' tunnel (y|n)?: " varConnect
+    read -rp "Would you like to connect '$vpn' tunnel [y/n]?: " varConnect
         case ${varConnect:0:1} in
         y|Y )
         echo "Connecting to wireguard tunnel '$vpn'"
@@ -41,9 +39,7 @@ else
         echo "Leaving wireguard tunnel '$vpn' down"
         ;;
         * )
-        echo "Invalid entry"
-        echo "Leaving wireguard tunnel '$vpn' down"
-        echo "Rerun command if you'd like to change options"
+        printf "\nInvalid entry\nLeaving wireguard tunnel '%s' down\nRerun command if you'd like to change options" "$vpn"
         ;;
         esac
 fi
