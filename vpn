@@ -1,7 +1,8 @@
 #!/bin/bash
 
-#Change to name of network interface 'ip a' to list interfaces
-vpn=wg0
+#Change to name of network interface 'nmcli connection show -a' to list interfaces connected
+vpntype="wireguard"
+vpn=$(nmcli -t connection show | grep "$vpntype" | awk -F: '{ print $1 }')
 
 # Need wireguard-tools & NetworkManager installed.
 # Put .conf file in /etc/wireguard/vpn.conf to use wg-quick
@@ -15,7 +16,7 @@ if nmcli connection show -a | grep $vpn; then
         echo "Bringing Wireguard tunnel '$vpn' down"
         nmcli connection down $vpn
         #wg-quick down $vpn
-        # Will reconnect current network to fill 'resolv.conf'
+        # Will reconnect current network to fix 'resolv.conf'
         con=$(nmcli connection show -a | awk 'FNR == 2 {print $1}')
         nmcli connection up "$con"
         ;;
