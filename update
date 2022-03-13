@@ -14,12 +14,6 @@ paru -Syu --noconfirm
 printf "\nUpdating tldr-pages\n"
 tldr -u
 
-#printf "\nUpgrading pip packages\n"
-# pip3 packages
-#pip3 list --outdated | awk '{print $1}' > req.txt
-#Remov top 2 lines
-#pip3 install -r req.txt --upgrade
-
 # Updates harware firmware
 printf "\nUpgrading firmware\n"
 #printf "\nDisplaying all devices detected"
@@ -34,10 +28,10 @@ fwupdmgr update
 # Checks for vulnerabilities
 printf "\nChecking CPU vulnerabliites\n"
 if lscpu | grep 'Vulnerability' | grep 'Vulnerable'; then
-    printf "\n#####################\n##YOU'RE VULNERABLE##\n#####################\n\nrun 'lscpu' and look at the Vulnerability section to see what's wrong\n"
-    read -rp "Enter to continue <ctrl + c> to cancel"</dev/tty
+  printf "\n#####################\n##YOU'RE VULNERABLE##\n#####################\n\nrun 'lscpu' and look at the Vulnerability section to see what's wrong\n"
+  read -rp "Enter to continue <ctrl + c> to cancel"</dev/tty
 else
-    printf "\nNo vulnerabilities found\n"
+  printf "\nNo vulnerabilities found\n"
 fi
 
 echo "Checking for new Kernel"
@@ -47,17 +41,17 @@ s1=$(pacman -Q linux-zen | sed -e 's/linux-zen //' -e 's/-/./g')
 s2=$(uname -r | sed -e 's/....$//' -e 's/-/./g')
 
 if [ "$s1" == "$s2" ]; then
-    printf "\nLatest Kernel Running\nNo reboot is required\n"
+  printf "\nLatest Kernel Running\nNo reboot is required\n"
 else
-    printf "\nNewer kernel has been installed\nReboot is required to finish install\n"
-    read -rp "Would you like to reboot now [y/N]?: " varReboot
-        case ${varReboot:0:1} in
-        y|Y )
-        echo "Restarting Computer"
-        reboot
-        ;;
-        * )
-        echo "Please restart your computer when convenient"
-        ;;
-        esac
+  printf "\nNewer kernel has been installed\nReboot is required to finish install\n"
+  read -rp "Would you like to reboot now [y/N]?: " varReboot
+  case ${varReboot:0:1} in
+    y|Y )
+      echo "Restarting Computer"
+      reboot
+      ;;
+    * )
+      echo "Please restart your computer when convenient"
+      ;;
+  esac
 fi

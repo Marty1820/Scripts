@@ -25,30 +25,29 @@ num='^[0-9]+$'
 
 # Runs loop to choose performance level
 while true; do
-    printf 'Please select an option: (Current - %s)\n\n' "$cur_name"
-    printf "%s\n" "${options[@]}" | grep -En ".*."
-    printf "0:Quit/Exit\n\n"
-    read -rp "Enter selection [#s only]: " choice
-    case "$choice" in
-        0)
-            # Exits prompts
-            printf "\nUser requested exit\n"
-            exit
-            ;;
-        *)
-            if ! [[ $choice =~ $num ]] ; then
-	            # Notifies of invalid entry and reruns loop
-	            printf "\n############# \nInvalid entry \n#############\n"
-	        else
-	            # Prints out choice then changes files to choice
-	            name=$(printf "%s\n" "${epb_values[choice - 1]}")
-	            echo "$name" | sudo tee "${eperf_files[@]}" > /dev/null
-	            sleep 2
-	            # Prints previous one/needs work
-	            printf "\nSetting CPU to %s\n" "$cur_name"
-	            exit
-            fi
-            ;;
-    esac
+  printf 'Please select an option: (Current - %s)\n\n' "$cur_name"
+  printf "%s\n" "${options[@]}" | grep -En ".*."
+  printf "0:Quit/Exit\n\n"
+  read -rp "Enter selection [#s only]: " choice
+  case "$choice" in
+    0)
+      # Exits prompts
+      printf "\nUser requested exit\n"
+      exit
+      ;;
+    *)
+      if ! [[ $choice =~ $num ]] ; then
+        # Notifies of invalid entry and reruns loop
+        printf "\n############# \nInvalid entry \n#############\n"
+      else
+        # Prints out choice then changes files to choice
+        name=$(printf "%s\n" "${epb_values[choice - 1]}")
+        echo "$name" | sudo tee "${eperf_files[@]}" > /dev/null
+        sleep 2
+        # Prints previous one/needs work
+        printf "\nSetting CPU to %s\n" "$cur_name"
+        exit
+      fi
+      ;;
+  esac
 done
-
