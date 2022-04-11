@@ -17,7 +17,7 @@ if nmcli connection show -a | grep $vpn; then
       nmcli connection down $vpn
       #wg-quick down $vpn
       # Will reconnect current network to fix 'resolv.conf'
-      con=$(nmcli connection show -a | awk 'FNR == 2 {print $1}')
+      con=$(nmcli connection show -a | awk -F '  ' 'FNR == 2 {print $1}')
       nmcli connection up "$con"
       ;;
     n|N )
