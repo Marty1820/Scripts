@@ -8,14 +8,14 @@ vpn=$(nmcli -t connection show | grep "$vpntype" | awk -F: '{ print $1 }')
 # Put .conf file in /etc/wireguard/vpn.conf to use wg-quick
 # run 'nmcli con import type wireguard file /etc/wireguard/vpn.conf' to use nmcli connection
 
-if nmcli connection show -a | grep $vpn; then
+if nmcli connection show -a | grep "$vpn"; then
   echo "Wireguard is currently running"
   read -rp "Would you like disconnect Wireguard '$vpn' [y/n]?: " varClose
   case ${varClose:0:1} in
     y|Y )
       echo "Bringing Wireguard tunnel '$vpn' down"
       #nmcli connection down $vpn
-      wg-quick down $vpn
+      wg-quick down "$vpn"
       # Will reconnect current network to fix 'resolv.conf'
       #con=$(nmcli connection show -a | awk -F '  ' 'FNR == 2 {print $1}')
       #nmcli connection up "$con"
@@ -34,7 +34,7 @@ else
     y|Y )
       echo "Connecting to wireguard tunnel '$vpn'"
       #nmcli connection up $vpn
-      wg-quick up $vpn
+      wg-quick up "$vpn"
       ;;
     n|N )
       echo "Leaving wireguard tunnel '$vpn' down"
