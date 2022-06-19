@@ -36,7 +36,7 @@ fi
 
 echo "Checking for new Kernel"
 # Checks if linux-zen kernal was updated
-# and reboot is required then notifies user
+# if so notifies user a reboot is required
 s1=$(pacman -Q linux-zen | sed -e 's/linux-zen //' -e 's/-/./g')
 s2=$(uname -r | sed -e 's/....$//' -e 's/-/./g')
 
