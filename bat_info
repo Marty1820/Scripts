@@ -1,5 +1,6 @@
 #!/bin/bash
-# Sends a notifcation with current watt usage, battery cycles, charging/discharging, & percent
+
+## Sends a notifcation using 'notify-send' with current watt usage, battery cycles, charging/discharging, & percent
 
 BATPATH='/sys/class/power_supply/BAT1'
 # Wattage calculation

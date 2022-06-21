@@ -1,9 +1,8 @@
 #!/bin/bash
 
-# Updates packages on Arch, tldr, and firmware
+# Updates packages on Arch using paru (pacman commented out), tldr, and firmware using fwupd
 # then checks for cpu vulnerabilities
-# notifies if reboot is needed
-# after kernel update with -zen kernel
+# notifies if reboot is needed after kernel update with -zen kernel
 
 # Pacman packages and AUR packages
 printf "Upgrading Packages\n"

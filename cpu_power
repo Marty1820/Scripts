@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# Checks currently set CPU power and give options for changing to better power or better battery life
+
 # array for all cpu's energy_perf_bias
 eperf_files=(/sys/devices/system/cpu/cpu*/power/energy_perf_bias)
 

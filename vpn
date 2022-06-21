@@ -1,5 +1,7 @@
 #!/bin/bash
 
+## Checks if vpnint is up and asks for disconnect or if not running asks for connection
+
 #Change to name of network interface 'nmcli connection show -a' to list interfaces connected
 vpnint="wg0"
 vpn=$(nmcli -t connection show | grep "$vpnint" | awk -F: '{ print $1 }')

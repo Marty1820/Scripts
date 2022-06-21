@@ -1,5 +1,6 @@
 #!/bin/sh
-# Notifies user when camera is enabled/disabled
+
+# Notifies user when camera is enabled/disabled in a loop
 # dependencies "dunst"
 
 CamDir="/sys/class/video4linux/video0/"

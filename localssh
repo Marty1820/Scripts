@@ -1,5 +1,7 @@
 #!/bin/bash
 
+## DISPLAYS LISTING OF SSH CLIENTS TO CONNECT TO
+
 # needs ~/.ssh/config setup before functioning
 
 # pulls 'Host' to display
