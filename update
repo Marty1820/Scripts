@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 # Updates packages on Arch using paru (pacman commented out), tldr, and firmware using fwupd
 # then checks for cpu vulnerabilities
@@ -39,12 +39,12 @@ echo "Checking for new Kernel"
 s1=$(pacman -Q linux-zen | sed -e 's/linux-zen //' -e 's/-/./g')
 s2=$(uname -r | sed -e 's/....$//' -e 's/-/./g')
 
-if [ "$s1" == "$s2" ]; then
+if [ "$s1" = "$s2" ]; then
   printf "\nLatest Kernel Running\nNo reboot is required\n"
 else
-  printf "\nNewer kernel has been installed\nReboot is required to finish install\n"
-  read -rp "Would you like to reboot now [y/N]?: " varReboot
-  case ${varReboot:0:1} in
+  printf "\nNewer kernel has been installed\nReboot is required to finish install\nWould you like to reboot now [y/N]?: " >&2
+  read -r reboot
+  case $reboot in
     y|Y )
       echo "Restarting Computer"
       reboot
