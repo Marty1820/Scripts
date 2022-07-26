@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 ## DISPLAYS LISTING OF SSH CLIENTS TO CONNECT TO
 
@@ -15,21 +15,19 @@ num='^[0-9]+$'
 while true; do
   printf "Please select an option:\n\n"
   printf "%s" "$host" | grep -En ".*."
-  printf "0:Quit/Exit\n\n"
-  read -rp "Enter selection [#s only]: " choice
+  printf "0:Quit/Exit\n\nEnter selection [#s only]: " >&2
+  read -r choice
   case "$choice" in
     0)
       printf "\nUser requested exit\n"
       exit
       ;;
+    ''|*[!0-9]*)
+      printf "\n############# \nInvalid entry \n#############\n\n"
+      ;;
     *)
-      if ! [[ $choice =~ $num ]] ; then
-        printf "\n############# \nInvalid entry \n#############\n"
-      else
-        name=$(printf "%s" "$host" | head -"$choice" | tail +"$choice")
-        ssh "$name"
-      fi
+      name=$(printf "%s" "$host" | head -"$choice" | tail +"$choice")
+      ssh "$name"
       ;;
   esac
 done
-
