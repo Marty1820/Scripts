@@ -22,9 +22,6 @@ case "${cur_ener}" in
   (*)  cur_name=$(printf "Value %s [0-15]" "$cur_ener") ;;
 esac
 
-# verifies that it's a number
-num='^[0-9]+$'
-
 # Runs loop to choose performance level
 while true; do
   printf 'Please select an option: (Current - %s)\n\n' "$cur_name"
@@ -35,21 +32,19 @@ while true; do
     0)
       # Exits prompts
       printf "\nUser requested exit\n"
-      exit
+      exit 0
+      ;;
+    ''|*[!0-9]*)
+      # All non numbers will fall into this
+      printf "\n############# \nInvalid entry \n#############\n\n"
       ;;
     *)
-      if ! [[ $choice =~ $num ]] ; then
-        # Notifies of invalid entry and reruns loop
-        printf "\n############# \nInvalid entry \n#############\n"
-      else
-        # Prints out choice then changes files to choice
-        name=$(printf "%s\n" "${epb_values[choice - 1]}")
-        echo "$name" | sudo tee "${eperf_files[@]}" > /dev/null
-        sleep 2
-        # Prints previous one/needs work
-        printf "\nSetting CPU to %s\n" "$cur_name"
-        exit
-      fi
+      name=$(printf "%s\n" "${epb_values[choice - 1]}")
+      echo "$name" | sudo tee "${eperf_files[@]}" > /dev/null
+      sleep 2
+      # Prints previous one/needs work
+      printf "\nSetting CPU to %s\n" "$cur_name"
+      exit 0
       ;;
   esac
 done
