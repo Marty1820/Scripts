@@ -7,10 +7,6 @@
 # pulls 'Host' to display
 host=$(awk '/Host / {print $2}' ~/.ssh/config)
 
-# Verifies you typed in a number and not other characters
-# Will still error if you type a number that doesn't exist
-num='^[0-9]+$'
-
 # Runs loop to ssh into system then reprompts when leaving system
 while true; do
   printf "Please select an option:\n\n"
@@ -23,6 +19,7 @@ while true; do
       exit
       ;;
     ''|*[!0-9]*)
+      # All non numbers will fall into this
       printf "\n############# \nInvalid entry \n#############\n\n"
       ;;
     *)
