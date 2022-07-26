@@ -1,23 +1,24 @@
-#!/bin/bash
+#!/bin/sh
 
 ## Checks if vpnint is up and asks for disconnect or if not running asks for connection
 
 #Change to name of network interface 'nmcli connection show -a' to list interfaces connected
 vpnint="wg0"
-vpn=$(nmcli -t connection show | grep "$vpnint" | awk -F: '{ print $1 }')
+vpntype="wireguard"
+vpn=$(nmcli -t connection show | grep "$vpntype" | awk -F: '{ print $1 }')
 
 # Need wireguard-tools & NetworkManager installed.
 # Put .conf file in /etc/wireguard/wg0.conf to use wg-quick
 # run 'nmcli con import type wireguard file /etc/wireguard/wg0.conf' to use nmcli connection
 
 if nmcli connection show --active | grep "$vpnint"; then
-  echo "Wireguard is currently running"
-  read -rp "Would you like disconnect Wireguard '$vpn' [y/n]?: " varClose
-  case ${varClose:0:1} in
+  printf "Wireguard is currently running\nWould you like disconnect Wireguard '%s' [y/n]?: " "$vpn" >&2
+  read -r varClose
+  case $varClose in
     y|Y )
       echo "Bringing Wireguard tunnel '$vpn' down"
-      #nmcli connection down $vpn
       wg-quick down "$vpnint"
+      #nmcli connection down $vpn
       # Will reconnect current network to fix 'resolv.conf'
       #con=$(nmcli connection show -a | awk -F '  ' 'FNR == 2 {print $1}')
       #nmcli connection up "$con"
@@ -30,13 +31,13 @@ if nmcli connection show --active | grep "$vpnint"; then
       ;;
   esac
 else
-  echo "Wireguard tunnel '$vpn' is not connected"
-  read -rp "Would you like to connect '$vpn' tunnel [y/n]?: " varConnect
-  case ${varConnect:0:1} in
+  printf "Wireguard tunnel '%s' is not connected\nWould you like to connect '%s' tunnel [y/n]?: " "$vpn" "$vpn" >&2
+  read -r varConnect
+  case $varConnect in
     y|Y )
       echo "Connecting to wireguard tunnel '$vpn'"
       #nmcli connection up $vpn
-      wg-quick up "$vpn"
+      wg-quick up "$vpnint"
       ;;
     n|N )
       echo "Leaving wireguard tunnel '$vpn' down"
