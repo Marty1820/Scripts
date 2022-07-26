@@ -29,8 +29,8 @@ num='^[0-9]+$'
 while true; do
   printf 'Please select an option: (Current - %s)\n\n' "$cur_name"
   printf "%s\n" "${options[@]}" | grep -En ".*."
-  printf "0:Quit/Exit\n\n"
-  read -rp "Enter selection [#s only]: " choice
+  printf "0:Quit/Exit\n\nEnter selection [#s only]: " >&2
+  read -r choice
   case "$choice" in
     0)
       # Exits prompts
