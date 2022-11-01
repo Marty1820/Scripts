@@ -7,7 +7,7 @@
 # Pacman packages and AUR packages
 printf "Upgrading Packages\n"
 #sudo pacman -Syu
-paru -Syu --noconfirm
+#paru -Syu
 
 # Updates TLDR
 printf "\nUpdating tldr-pages\n"
@@ -21,7 +21,7 @@ printf "\nDownloading the latest metadate from LVFS\n"
 fwupdmgr refresh
 #printf "\nAvailable Updates"
 #fwupdmgr get-updates
-printf "\nInstalling Updates\n"
+printf "Installing Updates\n"
 fwupdmgr update
 
 # Checks for vulnerabilities
@@ -30,17 +30,17 @@ if lscpu | grep 'Vulnerability' | grep 'Vulnerable'; then
   printf "\n#####################\n##YOU'RE VULNERABLE##\n#####################\n\nrun 'lscpu' and look at the Vulnerability section to see what's wrong\n"
   read -rp "Enter to continue <ctrl + c> to cancel"</dev/tty
 else
-  printf "\nNo vulnerabilities found\n"
+  printf "No vulnerabilities found\n"
 fi
 
-echo "Checking for new Kernel"
+printf "\nChecking for new Zen Kernel\n"
 # Checks if linux-zen kernal was updated
 # if so notifies user a reboot is required
 s1=$(pacman -Q linux-zen | sed -e 's/linux-zen //' -e 's/-/./g')
 s2=$(uname -r | sed -e 's/....$//' -e 's/-/./g')
 
 if [ "$s1" = "$s2" ]; then
-  printf "\nLatest Kernel Running\nNo reboot is required\n"
+  printf "Latest Kernel Running\nNo reboot is required\n"
 else
   printf "\nNewer kernel has been installed\nReboot is required to finish install\nWould you like to reboot now [y/N]?: " >&2
   read -r reboot
