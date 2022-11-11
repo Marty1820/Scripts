@@ -25,7 +25,7 @@ fwupd() {
   printf "\n%b\n" "\033[1m""Upgrading firmware""\033[0m"
   #printf "\nDisplaying all devices detected"
   #fwupdmgr get-devices
-  printf "\nDownloading the latest metadate from LVFS\n"
+  printf "Downloading the latest metadate from LVFS\n"
   fwupdmgr refresh
   #printf "\nAvailable Updates"
   #fwupdmgr get-updates
