@@ -1,56 +1,83 @@
 #!/bin/sh
 
-# Updates packages on Arch using paru (pacman commented out), tldr, and firmware using fwupd
-# then checks for cpu vulnerabilities
-# notifies if reboot is needed after kernel update with -zen kernel
+pkg_update() {
+  printf "%b\n" "\033[1m""Upgrading Packages""\033[0m"
+  #sudo pacman -Syu
+  paru -Syu
+}
 
-# Pacman packages and AUR packages
-printf "Upgrading Packages\n"
-#sudo pacman -Syu
-paru -Syu
+rebuild() {
+  printf "\n%b\n" "\033[1m""Checking for broken packages""\033[0m"
+  if eval "$(checkrebuild -v)"; then
+    printf "No rebuilds needed\n"
+  else
+    printf "%s" "Rebuild needed for above packages\nPress enter to continue..."
+    read ans
+  fi
+}
 
-# Updates TLDR
-printf "\nUpdating tldr-pages\n"
-tldr -u
+tldr_cache() {
+  printf "\n%b\n" "\033[1m""Updating tldr-pages""\033[0m"
+  tldr -u
+}
 
+fwupd() {
+  printf "\n%b\n" "\033[1m""Upgrading firmware""\033[0m"
+  #printf "\nDisplaying all devices detected"
+  #fwupdmgr get-devices
+  printf "\nDownloading the latest metadate from LVFS\n"
+  fwupdmgr refresh
+  #printf "\nAvailable Updates"
+  #fwupdmgr get-updates
+  printf "Installing Updates\n"
+  fwupdmgr update
+}
+
+cpu_vulns() {
+  printf "\n%b\n" "\033[1m""Checking CPU vulnerabliites""\033[0m"
+  if lscpu | grep 'Vulnerability' | grep 'Vulnerable'; then
+    printf "\n#####################\n##YOU'RE VULNERABLE##\n#####################\n\nrun 'lscpu' and look at the Vulnerability section to see what's wrong\n"
+    printf "%s" "Press enter to continue...\n"
+    read ans
+  else
+    printf "No vulnerabilities found\n"
+  fi
+}
+
+kern_chk() {
+  printf "\n%b\n" "\033[1m""Checking for new Zen Kernel""\033[0m"
+  # Checks if linux-zen kernal was updated
+  # if so notifies user a reboot is required
+  s1=$(pacman -Q linux-zen | sed -e 's/linux-zen //' -e 's/-/./g')
+  s2=$(uname -r | sed -e 's/....$//' -e 's/-/./g')
+
+  if [ "$s1" = "$s2" ]; then
+    printf "Latest Kernel Running\nNo reboot is required\n"
+  else
+    printf "\n%b" "\033[31;1m""Newer kernel has been installed""\n""Reboot is required to finish install""\033[0m""\n""Would you like to reboot now [y/N]?: " >&2
+    read -r reboot
+    case $reboot in
+      y|Y )
+        echo "Restarting Computer"
+        reboot
+        ;;
+      * )
+        echo "Please restart your computer when convenient"
+        ;;
+    esac
+  fi
+}
+
+# Updates packages switch to pacman if you don't have `paru`
+pkg_update
+# Comment out if you don't have `rebuild-detector` installed
+rebuild
+# Update `TLDR`
+tldr_cache
 # Updates harware firmware
-printf "\nUpgrading firmware\n"
-#printf "\nDisplaying all devices detected"
-#fwupdmgr get-devices
-printf "\nDownloading the latest metadate from LVFS\n"
-fwupdmgr refresh
-#printf "\nAvailable Updates"
-#fwupdmgr get-updates
-printf "Installing Updates\n"
-fwupdmgr update
+fwupd
+# Checks for CPU vulnerabilities
+cpu_vulns
+# Checks if linux-zen kernal was updated if so notifies user a reboot is required
+kern_chk
 
-# Checks for vulnerabilities
-printf "\nChecking CPU vulnerabliites\n"
-if lscpu | grep 'Vulnerability' | grep 'Vulnerable'; then
-  printf "\n#####################\n##YOU'RE VULNERABLE##\n#####################\n\nrun 'lscpu' and look at the Vulnerability section to see what's wrong\n"
-  read -rp "Enter to continue <ctrl + c> to cancel"</dev/tty
-else
-  printf "No vulnerabilities found\n"
-fi
-
-printf "\nChecking for new Zen Kernel\n"
-# Checks if linux-zen kernal was updated
-# if so notifies user a reboot is required
-s1=$(pacman -Q linux-zen | sed -e 's/linux-zen //' -e 's/-/./g')
-s2=$(uname -r | sed -e 's/....$//' -e 's/-/./g')
-
-if [ "$s1" = "$s2" ]; then
-  printf "Latest Kernel Running\nNo reboot is required\n"
-else
-  printf "\nNewer kernel has been installed\nReboot is required to finish install\nWould you like to reboot now [y/N]?: " >&2
-  read -r reboot
-  case $reboot in
-    y|Y )
-      echo "Restarting Computer"
-      reboot
-      ;;
-    * )
-      echo "Please restart your computer when convenient"
-      ;;
-  esac
-fi
