@@ -45,12 +45,18 @@ cpu_vulns() {
 }
 
 kern_chk() {
-  printf "\n%b\n" "\033[1m""Checking for new Zen Kernel""\033[0m"
+    printf "\n%b\n" "\033[1m""Checking for new Zen Kernel""\033[0m"
+  
+  # `linux`
+  s1=$(pacman -Q linux | sed -e 's/linux //' -e 's/-/./g')
+  s2=$(uname -r | sed -e 's/-/./g')
+
+  # `linux-zen`
+  #s1=$(pacman -Q linux-zen | sed -e 's/linux-zen //' -e 's/-/./g')
+  #s2=$(uname -r | sed -e 's/....$//' -e 's/-/./g')
+
   # Checks if linux-zen kernal was updated
   # if so notifies user a reboot is required
-  s1=$(pacman -Q linux-zen | sed -e 's/linux-zen //' -e 's/-/./g')
-  s2=$(uname -r | sed -e 's/....$//' -e 's/-/./g')
-
   if [ "$s1" = "$s2" ]; then
     printf "Latest Kernel Running\nNo reboot is required\n"
   else
