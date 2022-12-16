@@ -45,7 +45,7 @@ cpu_vulns() {
 }
 
 kern_chk() {
-    printf "\n%b\n" "\033[1m""Checking for new Zen Kernel""\033[0m"
+    printf "\n%b\n" "\033[1m""Checking for new Kernel""\033[0m"
   
   # `linux`
   s1=$(pacman -Q linux | sed -e 's/linux //' -e 's/-/./g')
