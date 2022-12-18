@@ -59,6 +59,7 @@ kern_chk() {
   # if so notifies user a reboot is required
   if [ "$s1" = "$s2" ]; then
     printf "Latest Kernel Running\nNo reboot is required\n"
+    orphan_pkgs
   else
     printf "\n%b" "\033[31;1m""Newer kernel has been installed""\n""Reboot is required to finish install""\033[0m""\n""Would you like to reboot now [y/N]?: " >&2
     read -r reboot
@@ -72,6 +73,11 @@ kern_chk() {
         ;;
     esac
   fi
+}
+
+orphan_pkgs() {
+  printf "\n%b" "\033[31;1m""Orphaned Packages""\033[0m""\n"
+  pacman -Qdt
 }
 
 # Updates packages switch to pacman if you don't have `paru`
