@@ -7,7 +7,7 @@
 # pulls 'Host' to display
 host=$(awk '/Host / {print $2}' ~/.ssh/config)
 
-# Runs loop to ssh into system then reprompts when leaving system
+# Runs loop to ssh into system then re-prompts when leaving system
 while true; do
   printf "Please select an option:\n\n"
   printf "%s" "$host" | grep -En ".*."
