@@ -17,24 +17,20 @@ rebuild() {
 }
 
 tldr_cache() {
-  printf "\n%b\n" "\033[1m""Updating tldr-pages""\033[0m"
+  printf "\n%b\n" "\033[1m""Updating TLDR-pages""\033[0m"
   tldr -u
 }
 
 fwupd() {
   printf "\n%b\n" "\033[1m""Upgrading firmware""\033[0m"
-  #printf "\nDisplaying all devices detected"
-  #fwupdmgr get-devices
-  printf "Downloading the latest metadate from LVFS\n"
+  printf "Downloading the latest meta date from LVFS\n"
   fwupdmgr refresh
-  #printf "\nAvailable Updates"
-  #fwupdmgr get-updates
   printf "Installing Updates\n"
   fwupdmgr update
 }
 
 cpu_vulns() {
-  printf "\n%b\n" "\033[1m""Checking CPU vulnerabliites""\033[0m"
+  printf "\n%b\n" "\033[1m""Checking CPU vulnerabilities""\033[0m"
   if lscpu | grep 'Vulnerability' | grep 'Vulnerable'; then
     printf "\n#####################\n##YOU'RE VULNERABLE##\n#####################\n\nrun 'lscpu' and look at the Vulnerability section to see what's wrong\n"
     printf "%b" "Press enter to continue..."
@@ -55,7 +51,7 @@ kern_chk() {
   #s1=$(pacman -Q linux-zen | sed -e 's/linux-zen //' -e 's/-/./g')
   #s2=$(uname -r | sed -e 's/....$//' -e 's/-/./g')
 
-  # Checks if linux-zen kernal was updated
+  # Checks if kernel was updated
   # if so notifies user a reboot is required
   if [ "$s1" = "$s2" ]; then
     printf "Latest Kernel Running\nNo reboot is required\n"
@@ -86,10 +82,10 @@ pkg_update
 rebuild
 # Update `TLDR`
 tldr_cache
-# Updates harware firmware
+# Updates hardware firmware
 fwupd
 # Checks for CPU vulnerabilities
 cpu_vulns
-# Checks if linux-zen kernal was updated if so notifies user a reboot is required
+# Checks if kernel was updated if so notifies user a reboot is required
 kern_chk
 
