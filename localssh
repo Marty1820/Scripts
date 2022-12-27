@@ -14,17 +14,17 @@ while true; do
   printf "0:Quit/Exit\n\nEnter selection [#s only]: " >&2
   read -r choice
   case "$choice" in
-    0)
-      printf "\nUser requested exit\n"
-      exit
-      ;;
-    ''|*[!0-9]*)
-      # All non numbers will fall into this
-      printf "\n############# \nInvalid entry \n#############\n\n"
-      ;;
-    *)
-      name=$(printf "%s" "$host" | head -"$choice" | tail +"$choice")
-      ssh "$name"
-      ;;
+  0)
+    printf "\nUser requested exit\n"
+    exit
+    ;;
+  '' | *[!0-9]*)
+    # All non numbers will fall into this
+    printf "\n############# \nInvalid entry \n#############\n\n"
+    ;;
+  *)
+    name=$(printf "%s" "$host" | head -"$choice" | tail +"$choice")
+    ssh "$name"
+    ;;
   esac
 done

@@ -41,8 +41,8 @@ cpu_vulns() {
 }
 
 kern_chk() {
-    printf "\n%b\n" "\033[1m""Checking for new Kernel""\033[0m"
-  
+  printf "\n%b\n" "\033[1m""Checking for new Kernel""\033[0m"
+
   # `linux`
   s1=$(pacman -Q linux | sed -e 's/linux //' -e 's/-/./g')
   s2=$(uname -r | sed -e 's/-/./g')
@@ -60,13 +60,13 @@ kern_chk() {
     printf "\n%b" "\033[31;1m""Newer kernel has been installed""\n""Reboot is required to finish install""\033[0m""\n""Would you like to reboot now [y/N]?: " >&2
     read -r reboot
     case $reboot in
-      y|Y )
-        echo "Restarting Computer"
-        reboot
-        ;;
-      * )
-        echo "Please restart your computer when convenient"
-        ;;
+    y | Y)
+      echo "Restarting Computer"
+      reboot
+      ;;
+    *)
+      echo "Please restart your computer when convenient"
+      ;;
     esac
   fi
 }
@@ -88,4 +88,3 @@ fwupd
 cpu_vulns
 # Checks if kernel was updated if so notifies user a reboot is required
 kern_chk
-

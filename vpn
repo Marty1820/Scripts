@@ -10,40 +10,39 @@ vpntype="wireguard"
 # Put .conf file in /etc/wireguard/wg0.conf to use wg-quick
 # run 'nmcli con import type wireguard file /etc/wireguard/wg0.conf' to use nmcli connection
 
-if nmcli connection show --active | grep "$vpnint" > /dev/null ; then
+if nmcli connection show --active | grep "$vpnint" >/dev/null; then
   printf "WireGuard is currently running\nWould you like to disconnect from WireGuard '%s' [y/n]?: " "$vpnint" >&2
   read -r varClose
   case $varClose in
-    y|Y )
-      echo "Bringing WireGuard tunnel '$vpnint' down"
-      wg-quick down "$vpnint"
-      #nmcli connection down $vpnint
-      # Will reconnect current network to fix 'resolv.conf'
-      #con=$(nmcli connection show -a | awk -F '  ' 'FNR == 2 {print $1}')
-      #nmcli connection up "$con"
-      ;;
-    n|N )
-      echo "Leaving WireGuard '$vpnint' connected"
-      ;;
-    * )
-      printf "\nInvalid entry\nLeaving WireGuard '%s' connected\nRerun command if you'd like to change options" "$vpnint"
-      ;;
+  y | Y)
+    echo "Bringing WireGuard tunnel '$vpnint' down"
+    wg-quick down "$vpnint"
+    #nmcli connection down $vpnint
+    # Will reconnect current network to fix 'resolv.conf'
+    #con=$(nmcli connection show -a | awk -F '  ' 'FNR == 2 {print $1}')
+    #nmcli connection up "$con"
+    ;;
+  n | N)
+    echo "Leaving WireGuard '$vpnint' connected"
+    ;;
+  *)
+    printf "\nInvalid entry\nLeaving WireGuard '%s' connected\nRerun command if you'd like to change options" "$vpnint"
+    ;;
   esac
 else
   printf "WireGuard tunnel '%s' is not connected\nWould you like to connect '%s' tunnel [y/n]?: " "$vpnint" "$vpnint" >&2
   read -r varConnect
   case $varConnect in
-    y|Y )
-      echo "Connecting to WireGuard tunnel '$vpnint'"
-      #nmcli connection up $vpnint
-      wg-quick up "$vpnint"
-      ;;
-    n|N )
-      echo "Leaving WireGuard tunnel '$vpnint' down"
-      ;;
-    * )
-      printf "\nInvalid entry\nLeaving WireGuard tunnel '%s' down\nRerun command if you'd like to change options" "$vpnint"
-      ;;
+  y | Y)
+    echo "Connecting to WireGuard tunnel '$vpnint'"
+    #nmcli connection up $vpnint
+    wg-quick up "$vpnint"
+    ;;
+  n | N)
+    echo "Leaving WireGuard tunnel '$vpnint' down"
+    ;;
+  *)
+    printf "\nInvalid entry\nLeaving WireGuard tunnel '%s' down\nRerun command if you'd like to change options" "$vpnint"
+    ;;
   esac
 fi
-
