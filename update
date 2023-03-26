@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env sh
 
 pkg_update() {
   printf "%b\n" "\033[1m""Upgrading Packages""\033[0m"

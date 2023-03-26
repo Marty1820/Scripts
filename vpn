@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env sh
 
 ## Checks if vpnint is up and asks for disconnect or if not running asks for connection
 

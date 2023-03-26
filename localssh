@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env sh
 
 ## DISPLAYS LISTING OF SSH CLIENTS TO CONNECT TO
 
