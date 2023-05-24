@@ -1,3 +1,4 @@
 # Scripts
-Random scripts I use exported in my PATH
-They're probably not well built but they work for me
+
+Random scripts I use
+They're probably not well built but they work for what I need them for.
