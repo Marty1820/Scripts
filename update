@@ -2,8 +2,11 @@
 
 pkg_update() {
   printf "%b\n" "\033[1m""Upgrading Packages""\033[0m"
-  #sudo pacman -Syu
-  paru -Syu
+  if [ -f /usr/bin/paru ]; then
+    paru
+  else
+    sudo pacman -Syu
+  fi
 }
 
 rebuild() {
