@@ -15,7 +15,7 @@ rebuild() {
     printf "No rebuilds needed\n"
   else
     printf "%s" "Rebuild needed for above packages\nPress enter to continue..."
-    read -r ans
+    read -r
   fi
 }
 
@@ -37,7 +37,7 @@ cpu_vulns() {
   if lscpu | grep 'Vulnerability' | grep 'Vulnerable'; then
     printf "\n#####################\n##YOU'RE VULNERABLE##\n#####################\n\nrun 'lscpu' and look at the Vulnerability section to see what's wrong\n"
     printf "%b" "Press enter to continue..."
-    read -r ans
+    read -r
   else
     printf "No vulnerabilities found\n"
   fi

@@ -5,46 +5,45 @@ INT_NAME=wg0
 
 # Function to check WireGuard connection status
 check_wireguard_status() {
-    if sudo wg show | grep -q "$INT_NAME"; then
-        echo "WireGuard is connected."
-        return 0
-    else
-        echo "WireGuard is not connected."
-        return 1
-    fi
+  if sudo wg show | grep -q "$INT_NAME"; then
+    echo "WireGuard is connected."
+    return 0
+  else
+    echo "WireGuard is not connected."
+    return 1
+  fi
 }
 
 # Function to connect WireGuard
 connect_wireguard() {
-    wg-quick up "$INT_NAME"
-    echo "WireGuard connected."
+  wg-quick up "$INT_NAME"
+  echo "WireGuard connected."
 }
 
 # Function to disconnect WireGuard
 disconnect_wireguard() {
-    wg-quick down "$INT_NAME"
-    echo "WireGuard disconnected."
+  wg-quick down "$INT_NAME"
+  echo "WireGuard disconnected."
 }
 
 # Main script
 echo "Checking WireGuard status..."
 if check_wireguard_status; then
-    # WireGuard is connected, prompt to disconnect
-    printf "Do you want to disconnect WireGuard?\nPlease enter 'y' to disconnect or any other key to exit: "
-    read -r answer
-    if [ "$answer" = "y" ]; then
-        disconnect_wireguard
-    else
-        echo "Leaving WireGuard up."
-    fi
+  # WireGuard is connected, prompt to disconnect
+  printf "Do you want to disconnect WireGuard?\nPlease enter 'y' to disconnect or any other key to exit: "
+  read -r answer
+  if [ "$answer" = "y" ]; then
+    disconnect_wireguard
+  else
+    echo "Leaving WireGuard up."
+  fi
 else
-    # WireGuard is not connected, prompt to connect
-    printf "Do you want to connect WireGuard?\nPlease enter 'y' to connect or any other key to exit: "
-    read -r answer
-    if [ "$answer" = "y" ]; then
-        connect_wireguard
-    else
-        echo "Leaving WireGuard down."
-    fi
+  # WireGuard is not connected, prompt to connect
+  printf "Do you want to connect WireGuard?\nPlease enter 'y' to connect or any other key to exit: "
+  read -r answer
+  if [ "$answer" = "y" ]; then
+    connect_wireguard
+  else
+    echo "Leaving WireGuard down."
+  fi
 fi
-
