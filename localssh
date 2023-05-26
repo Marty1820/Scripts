@@ -2,29 +2,39 @@
 
 ## DISPLAYS LISTING OF SSH CLIENTS TO CONNECT TO
 
-# needs ~/.ssh/config setup before functioning
+# Path to the SSH config file
+SSH_CONFIG="$HOME/.ssh/config"
 
-# pulls 'Host' to display
-host=$(awk '/Host / {print $2}' ~/.ssh/config)
+# Read the SSH config file and extract host entries
+hosts=$(awk '/^Host / {print $2}' "$SSH_CONFIG")
 
-# Runs loop to ssh into system then re-prompts when leaving system
-while true; do
-  printf "Please select an option:\n\n"
-  printf "%s" "$host" | grep -En ".*."
-  printf "0:Quit/Exit\n\nEnter selection [#s only]: " >&2
-  read -r choice
-  case "$choice" in
-  0)
-    printf "\nUser requested exit\n"
-    exit
-    ;;
-  '' | *[!0-9]*)
-    # All non numbers will fall into this
-    printf "\n############# \nInvalid entry \n#############\n\n"
-    ;;
-  *)
-    name=$(printf "%s" "$host" | head -"$choice" | tail +"$choice")
-    ssh "$name"
-    ;;
-  esac
+# Display the available systems
+echo "Available systems:"
+index=1
+for host in $hosts; do
+    echo "$index. $host"
+    index=$((index + 1))
 done
+
+# Prompt for system selection
+while true; do
+    echo
+    echo -n "Enter the number of the system to connect to (or 'q' to quit): "
+    read choice
+
+    case $choice in
+        [1-9])
+            selected_host=$(echo "$hosts" | awk -v choice="$choice" 'NR == choice')
+            ssh "$selected_host"
+            break
+            ;;
+        q|Q)
+            echo "Exiting."
+            exit 0
+            ;;
+        *)
+            echo "Invalid option. Please try again."
+            ;;
+    esac
+done
+
