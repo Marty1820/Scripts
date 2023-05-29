@@ -25,8 +25,8 @@ tldr_cache() {
 }
 
 fwupd() {
-  printf "\n%b\n" "\033[1m""Upgrading firmware""\033[0m"
-  printf "Downloading the latest meta date from LVFS\n"
+  printf "\n%b\n" "\033[1m""Firmware check/update""\033[0m"
+  printf "Downloading the latest meta data from LVFS\n"
   fwupdmgr refresh
   printf "Installing Updates\n"
   fwupdmgr update
@@ -79,7 +79,7 @@ orphan_pkgs() {
   pacman -Qdt
 }
 
-# Updates packages switch to pacman if you don't have `paru`
+# Updates packages using paru or pacman if paru is not installed
 pkg_update
 # Comment out if you don't have `rebuild-detector` installed
 rebuild
@@ -89,5 +89,5 @@ tldr_cache
 fwupd
 # Checks for CPU vulnerabilities
 cpu_vulns
-# Checks if kernel was updated if so notifies user a reboot is required
+# Checks if kernel was updated if so notifies user to reboot
 kern_chk
