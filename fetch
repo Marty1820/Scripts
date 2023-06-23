@@ -117,7 +117,7 @@ if [ -e /proc/$$/comm ]; then
 	# kiss, arch, debian, void, gentoo
 	for i in '/var/db/kiss/installed/*' '/var/lib/pacman/local/[0-9a-z]*' \
 		'/var/lib/dpkg/info/*.list' '/var/db/xbps/.*' '/var/db/pkg/*/*'; do
-		set -- $i
+		set -- "$i"
 		[ $# -gt 1 ] && pkgs=$# && break
 	done
 
@@ -148,7 +148,7 @@ elif [ -f /var/run/dmesg.boot ]; then
 				;;
 			# First 2 words in the file are OpenBSD <version>
 			*) [ "$ID" ] || {
-				set -- $line
+				set -- "$line"
 				ID="$1 $2"
 			} ;;
 			esac
