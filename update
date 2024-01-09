@@ -1,82 +1,83 @@
 #!/usr/bin/env sh
 
 pkg_update() {
-	printf "%b\n" "\033[1m""Upgrading Packages""\033[0m"
-	if [ -f /usr/bin/paru ]; then
-		paru
-	else
-		sudo pacman -Syu
-	fi
+  printf "%b\n" "\033[1m""Upgrading Packages""\033[0m"
+  if [ -f /usr/bin/paru ]; then
+    paru
+  else
+    sudo pacman -Syu
+  fi
 }
 
 rebuild() {
-	printf "\n%b\n" "\033[1m""Checking for broken packages""\033[0m"
-	if eval "$(checkrebuild -v)"; then
-		printf "No rebuilds needed\n"
-	else
-		printf "%s" "Rebuild needed for above packages\nPress enter to continue..."
-		read -r
-	fi
+  printf "\n%b\n" "\033[1m""Checking for broken packages""\033[0m"
+  if eval "$(checkrebuild -v)"; then
+    printf "No rebuilds needed\n"
+  else
+    printf "%s" "Rebuild needed for above packages\nPress enter to continue..."
+    read -r
+  fi
 }
 
 tldr_cache() {
-	printf "\n%b\n" "\033[1m""Updating TLDR-pages""\033[0m"
-	tldr -u
+  printf "\n%b\n" "\033[1m""Updating TLDR-pages""\033[0m"
+  tldr -u
 }
 
 fwupd() {
-	printf "\n%b\n" "\033[1m""Firmware check/update""\033[0m"
-	printf "Downloading the latest meta data from LVFS\n"
-	fwupdmgr refresh
-	printf "Installing Updates\n"
-	fwupdmgr update
+  printf "\n%b\n" "\033[1m""Firmware check/update""\033[0m"
+  printf "Downloading the latest meta data from LVFS\n"
+  fwupdmgr refresh
+  printf "Installing Updates\n"
+  fwupdmgr update
 }
 
 cpu_vulns() {
-	printf "\n%b\n" "\033[1m""Checking CPU vulnerabilities""\033[0m"
-	if lscpu | grep 'Vulnerability' | grep 'Vulnerable'; then
-		printf "\n#####################\n##YOU'RE VULNERABLE##\n#####################\n\nrun 'lscpu' and look at the Vulnerability section to see what's wrong\n"
-		printf "%b" "Press enter to continue..."
-		read -r
-	else
-		printf "No vulnerabilities found\n"
-	fi
+  printf "\n%b\n" "\033[1m""Checking CPU vulnerabilities""\033[0m"
+  if lscpu | grep 'Vulnerability' | grep 'Vulnerable'; then
+    printf "\n#####################\n##YOU'RE VULNERABLE##\n#####################\n\nrun 'lscpu' and look at the Vulnerability section to see what's wrong\n"
+    printf "%b" "Press enter to continue..."
+    read -r
+  else
+    printf "No vulnerabilities found\n"
+  fi
 }
 
 kern_chk() {
-	printf "\n%b\n" "\033[1m""Checking for new Kernel""\033[0m"
+  printf "\n%b\n" "\033[1m""Checking for new Kernel""\033[0m"
 
-	# `linux`
-	s1=$(pacman -Q linux | sed -e 's/linux //' -e 's/-/./g')
-	s2=$(uname -r | sed -e 's/-/./g')
+  # `linux`
+  s1=$(pacman -Q linux | sed -e 's/linux //' -e 's/-/./g')
+  s2=$(uname -r | sed -e 's/-/./g')
 
-	# `linux-zen`
-	#s1=$(pacman -Q linux-zen | sed -e 's/linux-zen //' -e 's/-/./g')
-	#s2=$(uname -r | sed -e 's/....$//' -e 's/-/./g')
+  # `linux-zen`
+  #s1=$(pacman -Q linux-zen | sed -e 's/linux-zen //' -e 's/-/./g')
+  #s2=$(uname -r | sed -e 's/....$//' -e 's/-/./g')
 
-	# Checks if kernel was updated
-	# if so notifies user a reboot is required
-	if [ "$s1" = "$s2" ]; then
-		printf "Latest Kernel Running\nNo reboot is required\n"
-		orphan_pkgs
-	else
-		printf "\n%b" "\033[31;1m""Newer kernel has been installed""\n""Reboot is required to finish install""\033[0m""\n""Would you like to reboot now [y/N]?: " >&2
-		read -r reboot
-		case $reboot in
-		y | Y)
-			echo "Restarting Computer"
-			reboot
-			;;
-		*)
-			echo "Please restart your computer when convenient"
-			;;
-		esac
-	fi
+  # Checks if kernel was updated
+  # if so notifies user a reboot is required
+  if [ "$s1" = "$s2" ]; then
+    printf "Latest Kernel Running\nNo reboot is required\n"
+    orphan_pkgs
+  else
+    printf "\n%b" "\033[31;1m""Newer kernel has been installed""\n""Reboot is required to finish install""\033[0m""\n""Would you like to reboot now [y/N]?: " >&2
+    read -r reboot
+    case $reboot in
+    y | Y)
+      echo "Restarting Computer"
+      reboot
+      ;;
+    *)
+      echo "Please restart your computer when convenient"
+      ;;
+    esac
+  fi
 }
 
 orphan_pkgs() {
-	printf "\n%b" "\033[31;1m""Orphaned Packages""\033[0m""\n"
-	pacman -Qdt
+  printf "\n%b" "\033[31;1m""Orphaned Packages""\033[0m""\n"
+  pacman -Qdt
+  exit 0
 }
 
 # Updates packages using paru or pacman if paru is not installed
