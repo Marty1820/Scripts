@@ -1,15 +1,20 @@
 #!/usr/bin/env sh
 
 # Name of the WireGuard interface
-INT_NAME=wg0
+# Or send as variable
+if [ -z "$1" ]; then
+  INT_NAME=proton
+else
+  INT_NAME="$1"
+fi
 
 # Function to check WireGuard connection status
 check_wireguard_status() {
   if sudo wg show | grep -q "$INT_NAME"; then
-    echo "WireGuard is connected."
+    echo "WireGuard tunnel ("$INT_NAME") is connected."
     return 0
   else
-    echo "WireGuard is not connected."
+    echo "WireGuard tunnel ("$INT_NAME") is not connected."
     return 1
   fi
 }
@@ -17,33 +22,33 @@ check_wireguard_status() {
 # Function to connect WireGuard
 connect_wireguard() {
   wg-quick up "$INT_NAME"
-  echo "WireGuard connected."
+  echo "WireGuard tunnel ("$INT_NAME") connected."
 }
 
 # Function to disconnect WireGuard
 disconnect_wireguard() {
   wg-quick down "$INT_NAME"
-  echo "WireGuard disconnected."
+  echo "WireGuard tunnel ("$INT_NAME") disconnected."
 }
 
 # Main script
 echo "Checking WireGuard status..."
 if check_wireguard_status; then
   # WireGuard is connected, prompt to disconnect
-  printf "Do you want to disconnect WireGuard?\nPlease enter 'y' to disconnect or any other key to exit: "
+  printf "Do you want to disconnect the ("$INT_NAME") tunnel?\nPlease enter 'y' to disconnect or any other key to exit: "
   read -r answer
   if [ "$answer" = "y" ]; then
     disconnect_wireguard
   else
-    echo "Leaving WireGuard up."
+    echo "Leaving WireGuard tunnel ("$INT_NAME") up."
   fi
 else
   # WireGuard is not connected, prompt to connect
-  printf "Do you want to connect WireGuard?\nPlease enter 'y' to connect or any other key to exit: "
+  printf "Do you want to connect to ("$INT_NAME") tunnel?\nPlease enter 'y' to connect or any other key to exit: "
   read -r answer
   if [ "$answer" = "y" ]; then
     connect_wireguard
   else
-    echo "Leaving WireGuard down."
+    echo "Leaving WireGuard tunnel ("$INT_NAME") down."
   fi
 fi
