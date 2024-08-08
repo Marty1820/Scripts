@@ -1,54 +1,60 @@
-#!/usr/bin/env sh
+#!/usr/bin/env bash
 
 # Name of the WireGuard interface
 # Or send as variable
-if [ -z "$1" ]; then
-  INT_NAME=proton
-else
-  INT_NAME="$1"
-fi
+INT_NAME="${1:-proton}"
 
 # Function to check WireGuard connection status
 check_wireguard_status() {
   if sudo wg show | grep -q "$INT_NAME"; then
-    echo "WireGuard tunnel ("$INT_NAME") is connected."
+    echo "WireGuard tunnel ('$INT_NAME') is connected."
     return 0
   else
-    echo "WireGuard tunnel ("$INT_NAME") is not connected."
+    echo "WireGuard tunnel ('$INT_NAME') is not connected."
     return 1
   fi
 }
 
 # Function to connect WireGuard
 connect_wireguard() {
-  wg-quick up "$INT_NAME"
-  echo "WireGuard tunnel ("$INT_NAME") connected."
+  if wg-quick up "$INT_NAME"; then
+    echo "WireGuard tunnel ('$INT_NAME') connected."
+  else
+    echo "Failed to connect WireGuard tunnel ('$INT_NAME')."
+  fi
 }
 
 # Function to disconnect WireGuard
 disconnect_wireguard() {
-  wg-quick down "$INT_NAME"
-  echo "WireGuard tunnel ("$INT_NAME") disconnected."
+  if wg-quick down "$INT_NAME"; then
+    echo "WireGuard tunnel ('$INT_NAME') disconnected."
+  else
+    echo "Failed to disconnect WireGuard tunnel ('$INT_NAME')."
+  fi
 }
 
 # Main script
 echo "Checking WireGuard status..."
 if check_wireguard_status; then
   # WireGuard is connected, prompt to disconnect
-  printf "Do you want to disconnect the ("$INT_NAME") tunnel?\nPlease enter 'y' to disconnect or any other key to exit: "
-  read -r answer
-  if [ "$answer" = "y" ]; then
-    disconnect_wireguard
-  else
-    echo "Leaving WireGuard tunnel ("$INT_NAME") up."
-  fi
+  read -rp "Do you want to disconnect the ('$INT_NAME') tunnel? [y/N]: " answer
+  case "$answer" in
+    [yY])
+      disconnect_wireguard
+      ;;
+    *)
+      echo "Leaving WireGuard tunnel ('$INT_NAME') up."
+      ;;
+  esac
 else
   # WireGuard is not connected, prompt to connect
-  printf "Do you want to connect to ("$INT_NAME") tunnel?\nPlease enter 'y' to connect or any other key to exit: "
-  read -r answer
-  if [ "$answer" = "y" ]; then
-    connect_wireguard
-  else
-    echo "Leaving WireGuard tunnel ("$INT_NAME") down."
-  fi
+  read -rp "Do you want to connect to ('$INT_NAME') tunnel? [y/N]: " answer
+  case "$answer" in
+    [y/Y])
+      connect_wireguard
+      ;;
+    *)
+      echo "Leaving WireGuard tunnel ('$INT_NAME') down."
+      ;;
+  esac
 fi
