@@ -1,12 +1,22 @@
-#!/usr/bin/env sh
-
-## DISPLAYS LISTING OF SSH CLIENTS TO CONNECT TO
+#!/usr/bin/env bash
 
 # Path to the SSH config file
 SSH_CONFIG="$HOME/.ssh/config"
 
+# Check if SSH config file exists
+if [ ! -f "$SSH_CONFIG" ]; then
+  echo "SSH config file not found at $SSH_CONFIG"
+  exit 1
+fi
+
 # Read the SSH config file and extract host entries
 hosts=$(awk '/^Host / {print $2}' "$SSH_CONFIG")
+
+# Check if any hosts were found
+if [ -z "$hosts" ]; then
+  echo "No hosts found in the SSH config file."
+  exit 1
+fi
 
 # Display the available systems
 echo "Available systems:"
@@ -21,18 +31,18 @@ while true; do
   printf "\nEnter the number of the system to connect to (or 'q' to quit): "
   read -r choice
 
-  case $choice in
-  [1-9])
-    selected_host=$(echo "$hosts" | awk -v choice="$choice" 'NR == choice')
-    ssh "$selected_host"
-    break
-    ;;
-  q | Q)
+  if [[ $choice =~ ^[0-9]+$ ]]; then
+    if ((choice >= 1 && choice < index)); then
+      selected_host=$(echo "$hosts" | awk -v choice="$choice" 'NR == choice')
+      ssh "$selected_host"
+      break
+    else
+      echo "Invalid number. Please select a number between 1 and $((index - 1))."
+    fi
+  elif [[ $choice =~ ^[qQ]$ ]]; then
     echo "Exiting."
     exit 0
-    ;;
-  *)
+  else
     echo "Invalid option. Please try again."
-    ;;
-  esac
+  fi
 done
