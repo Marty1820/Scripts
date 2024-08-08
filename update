@@ -1,95 +1,93 @@
-#!/usr/bin/env sh
+#!/usr/bin/env bash
 
+# Function to update packages
 pkg_update() {
-  printf "%b\n" "\033[1m""Upgrading Packages""\033[0m"
-  if [ -f /usr/bin/paru ]; then
+  echo -e "\n\033[1mUpgrading Packages\033[0m"
+  if command -v paru > /dev/null 2>&1; then
     paru
   else
     sudo pacman -Syu
   fi
 }
 
+# Function to check for broken packages
 rebuild() {
-  printf "\n%b\n" "\033[1m""Checking for broken packages""\033[0m"
-  if eval "$(checkrebuild -v)"; then
-    printf "No rebuilds needed\n"
+  echo -e "\n\033[1mChecking for broken packages\033[0m"
+  if checkrebuild -v > /dev/null 2>&1; then
+    echo "No rebuilds needed"
   else
-    printf "%s" "Rebuild needed for above packages\nPress enter to continue..."
+    echo -e "Rebuild needed for above packages\nPress enter to continue..."
     read -r
   fi
 }
 
+# Function to update TLDR-pages
 tldr_cache() {
-  printf "\n%b\n" "\033[1m""Updating TLDR-pages""\033[0m"
+  echo -e "\n\033[1mUpdating TLDR-pages\033[0m"
   tldr -u
 }
 
+# Function to check and update firmware
 fwupd() {
-  printf "\n%b\n" "\033[1m""Firmware check/update""\033[0m"
-  printf "Downloading the latest meta data from LVFS\n"
+  echo -e "\033[1m""Firmware check/update""\033[0m"
+  echo "Downloading the latest meta data from LVFS"
   fwupdmgr refresh
-  printf "Installing Updates\n"
+  echo "Installing Updates"
   fwupdmgr update
 }
 
+# Function to check for CPU vulnerabilities
 cpu_vulns() {
-  printf "\n%b\n" "\033[1m""Checking CPU vulnerabilities""\033[0m"
-  if lscpu | grep 'Vulnerability' | grep 'Vulnerable'; then
-    printf "\n#####################\n##YOU'RE VULNERABLE##\n#####################\n\nrun 'lscpu' and look at the Vulnerability section to see what's wrong\n"
-    printf "%b" "Press enter to continue..."
+  echo -e "\033[1m""Checking CPU vulnerabilities""\033[0m"
+  if lscpu | grep -q 'Vulnerability:.*Vulnerable'; then
+    echo -e "\n#####################\n##YOU'RE VULNERABLE##\n#####################\n"
+    echo "Run 'lscpu' and look at the Vulnerability section to see what's wrong"
+    echo -e "Press enter to continue..."
     read -r
   else
-    printf "No vulnerabilities found\n"
+    echo "No vulnerabilities found"
   fi
 }
 
+# Function to check for new kernel
 kern_chk() {
   #Doesn't work on kernels with .0 endings ex. 6.7.0
-  printf "\n%b\n" "\033[1m""Checking for new Kernel""\033[0m"
+  echo -e "\n\033[1mChecking for new Kernel\033[0m"
+
+  local current_kernel
+  local running_kernel
 
   # `linux`
-  s1=$(pacman -Q linux | sed -e 's/linux //' -e 's/-/./g')
-  s2=$(uname -r | sed -e 's/-/./g')
-
-  # `linux-zen`
-  #s1=$(pacman -Q linux-zen | sed -e 's/linux-zen //' -e 's/-/./g')
-  #s2=$(uname -r | sed -e 's/....$//' -e 's/-/./g')
+  current_kernel=$(pacman -Q linux | sed -e 's/linux //' -e 's/-/./g')
+  running_kernel=$(uname -r | sed -e 's/-/./g')
 
   # Checks if kernel was updated
   # if so notifies user a reboot is required
-  if [ "$s1" = "$s2" ]; then
-    printf "Latest Kernel Running\nNo reboot is required\n"
+  if [ "$current_kernel" = "$running_kernel" ]; then
+    echo "Latest Kernel Running"
+    echo "No reboot is required"
     orphan_pkgs
   else
-    printf "\n%b" "\033[31;1m""Newer kernel has been installed""\n""Reboot is required to finish install""\033[0m""\n""Would you like to reboot now [y/N]?: " >&2
-    read -r reboot
+    echo -e "\033[31;1mNewer kernel has been installed\nReboot is required to finish install\033[0m"
+    read -rp "Would you like to reboot now [y/N]?: " reboot
     case $reboot in
-    y | Y)
-      echo "Restarting Computer"
-      reboot
-      ;;
-    *)
-      echo "Please restart your computer when convenient"
-      ;;
+    [yY]) echo "Restarting Computer"; reboot ;;
+    *) echo "Please restart your computer when convenient" ;;
     esac
   fi
 }
 
+# Function to list orphaned packages
 orphan_pkgs() {
-  printf "\n%b" "\033[31;1m""Orphaned Packages""\033[0m""\n"
+  echo -e "\n\033[31;1mOrphaned Packages\033[0m"
   pacman -Qdt
   exit 0
 }
 
-# Updates packages using paru or pacman if paru is not installed
+# Main script execution
 pkg_update
-# Comment out if you don't have `rebuild-detector` installed
 rebuild
-# Update `TLDR`
 tldr_cache
-# Updates hardware firmware
 fwupd
-# Checks for CPU vulnerabilities
 cpu_vulns
-# Checks if kernel was updated if so notifies user to reboot
 kern_chk
