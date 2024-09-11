@@ -4,7 +4,7 @@
 pkg_update() {
   echo -e "\n\033[1mUpgrading Packages\033[0m"
   if command -v paru > /dev/null 2>&1; then
-    paru
+    paru -Syu
   else
     sudo pacman -Syu
   fi
@@ -51,18 +51,11 @@ cpu_vulns() {
 
 # Function to check for new kernel
 kern_chk() {
-  #Doesn't work on kernels with .0 endings ex. 6.7.0
   echo -e "\n\033[1mChecking for new Kernel\033[0m"
-
-  local current_kernel
-  local running_kernel
-
-  # `linux`
-  current_kernel=$(pacman -Q linux | sed -e 's/linux //' -e 's/-/./g')
+  local current_kernel running_kernel
+  current_kernel=$(pacman -Q linux | awk '{print $2}' | sed -e 's/-/./g')
   running_kernel=$(uname -r | sed -e 's/-/./g')
 
-  # Checks if kernel was updated
-  # if so notifies user a reboot is required
   if [ "$current_kernel" = "$running_kernel" ]; then
     echo "Latest Kernel Running"
     echo "No reboot is required"
